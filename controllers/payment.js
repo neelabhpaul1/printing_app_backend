@@ -58,12 +58,12 @@ const initiateTransfer = async (paymentId, amount, accountId) => {
       transfers: [
         {
           account: accountId,
-          amount: amount - parseInt(`${process.env.FEES_AMOUNT}`) * 100,
+          amount: (amount - parseInt(`${process.env.FEES_AMOUNT}`) * 100) + (amount - parseInt(`${process.env.FEES_AMOUNT}`) * 100 * 0.005),
           currency: "INR",
         },
         {
           account: `${process.env.RAZORPAY_FEES_ACCOUNT_ID}`,
-          amount: parseInt(`${process.env.FEES_AMOUNT}`) * 100,
+          amount: (parseInt(`${process.env.FEES_AMOUNT}`) * 100) - (amount - parseInt(`${process.env.FEES_AMOUNT}`) * 100 * 0.005),
           currency: "INR",
         },
       ],
