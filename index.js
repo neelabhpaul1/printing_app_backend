@@ -11,23 +11,23 @@ const cors = require("cors");
 connection();
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "*");
 
-  next();
+	next();
 });
 
 app.use(
-  cors({
-    origin: [
-      `${process.env.USER_FRONTEND_URL}`,
-      ,
-      `${process.env.ADMIN_FRONTEND_URL}`,
-    ],
-    methods: ["GET", "POST"],
+	cors({
+		origin: [
+			`${process.env.USER_FRONTEND_URL}`,
+			,
+			`${process.env.ADMIN_FRONTEND_URL}`,
+		],
+		methods: ["GET", "POST"],
 
-    credentials: true,
-  })
+		credentials: true,
+	})
 );
 app.use(express.json());
 app.use("/files", express.static("files"));
@@ -41,37 +41,55 @@ const server = require("http").createServer(app);
 const io = require("./util/socket").init(server);
 
 io.on("connection", (socket) => {
-  console.log("Client connected");
+	console.log("Client connected");
 
-  socket.on("join_room", async (room) => {
-    socket.join(room.shopId);
+	socket.on("join_room", async (room) => {
+		socket.join(room.shopId);
 
-    const orders = await Orders.find({
-      shopId: room.shopId,
-    });
+		const orders = await Orders.find({
+			shopId: room.shopId,
+		})
+			.sort({ _id: -1 })
+			.lean();
 
-    socket.emit("receiveOrders", { orders });
+		const prevOrders = orders.map((order, index) => ({
+			...order,
+			sno: orders.length - index,
+		}));
 
-    socket.on("updateTrigger", async (data) => {
-      const updatedOrder = await Orders.findByIdAndUpdate(
-        { _id: data.id },
-        { isTriggered: data.triggered },
-        { new: true }
-      );
+		socket.emit("receiveOrders", { prevOrders });
 
-      socket.emit("updatedOrder", { updatedOrder });
-    });
-  });
+		socket.on("updateTrigger", async (data) => {
+			const updatedOrder = await Orders.findByIdAndUpdate(
+				{ _id: data.id },
+				{ isTriggered: data.triggered },
+				{ new: true }
+			);
 
-  socket.on("disconnect", () => {
-    console.log("client disconnected");
-  });
+			const latestOrders = await Orders.find({ shopId: data.shopId })
+				.sort({
+					_id: -1,
+				})
+				.lean();
+
+			const updatedOrders = latestOrders.map((order, index) => ({
+				...order,
+				sno: latestOrders.length - index,
+			}));
+
+			socket.emit("updatedOrders", { updatedOrders, updatedOrder });
+		});
+	});
+
+	socket.on("disconnect", () => {
+		console.log("client disconnected");
+	});
 });
 
 server.listen(PORT, (err) => {
-  if (err) {
-    console.log(err.message);
-  } else {
-    console.log(`Server running at ${PORT}`);
-  }
+	if (err) {
+		console.log(err.message);
+	} else {
+		console.log(`Server running at ${PORT}`);
+	}
 });
