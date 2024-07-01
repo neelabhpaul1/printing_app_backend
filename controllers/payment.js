@@ -52,21 +52,14 @@ exports.payment = async (req, res) => {
   });
 };
 
-const initiateTransfer = async (paymentId, amount, accountId) => {
+const initiateTransfer = async (amount, accountId) => {
   try {
-    const transfer = await razorpayInstance.payments.transfer(paymentId, {
-      transfers: [
-        {
-          account: accountId,
-          amount: (amount - parseInt(`${process.env.FEES_AMOUNT}`) * 100) + (amount - parseInt(`${process.env.FEES_AMOUNT}`) * 100 * 0.005),
-          currency: "INR",
-        },
-        {
-          account: `${process.env.RAZORPAY_FEES_ACCOUNT_ID}`,
-          amount: (parseInt(`${process.env.FEES_AMOUNT}`) * 100) - (amount - parseInt(`${process.env.FEES_AMOUNT}`) * 100 * 0.005),
-          currency: "INR",
-        },
-      ],
+    const transferAmount = amount - parseInt(`${process.env.FEES_AMOUNT}`) * 100;
+    const razorypayFee = transferAmount * 0.005;
+    const transfer = await razorpayInstance.transfers.create({
+      account: accountId,
+      amount: transferAmount + razorypayFee,
+      currency: "INR",
     });
     return transfer;
   } catch (error) {
@@ -115,7 +108,7 @@ exports.verifyPayment = async (req, res) => {
 
     if (razorpay_signature == resultSign) {
       await capturePayment(razorpay_payment_id, amount, "INR");
-      await initiateTransfer(razorpay_payment_id, amount, accountId);
+      await initiateTransfer(amount, accountId);
 
       return res.status(200).json({
         success: true,
