@@ -57,7 +57,9 @@ io.on("connection", (socket) => {
 			sno: orders.length - index,
 		}));
 
-		socket.emit("receiveOrders", { prevOrders });
+		const limitOrders = prevOrders.slice(0, 2000)
+
+		socket.emit("receiveOrders", { orders: limitOrders });
 
 		socket.on("updateTrigger", async (data) => {
 			const updatedOrder = await Orders.findByIdAndUpdate(
