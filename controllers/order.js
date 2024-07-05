@@ -68,11 +68,11 @@ exports.updateOrder = async (req, res) => {
       { new: true }
     );
 
-    const latestOrders = await Orders.find({});
+    // const latestOrders = await Orders.find();
 
     return res
       .status(200)
-      .json({ latestOrders, updatedOrder, message: "order updated" });
+      .json({ updatedOrder, message: "order updated" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
