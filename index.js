@@ -55,11 +55,9 @@ io.on("connection", (socket) => {
 		const prevOrders = orders.map((order, index) => ({
 			...order,
 			sno: orders.length - index,
-		}));
+		})).slice(0, 2000);
 
-		const limitOrders = prevOrders.slice(0, 2000)
-
-		socket.emit("receiveOrders", { orders: limitOrders });
+		socket.emit("receiveOrders", { orders: prevOrders });
 
 		socket.on("updateTrigger", async (data) => {
 			const updatedOrder = await Orders.findByIdAndUpdate(
@@ -77,7 +75,7 @@ io.on("connection", (socket) => {
 			const updatedOrders = latestOrders.map((order, index) => ({
 				...order,
 				sno: latestOrders.length - index,
-			}));
+			})).slice(0, 2000);
 
 			socket.emit("updatedOrders", { updatedOrders, updatedOrder });
 		});
