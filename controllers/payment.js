@@ -9,24 +9,11 @@ const razorpayInstance = new Razorpay({
 exports.payment = async (req, res) => {
 	const { noOfPages, pageSizeFormat, grayOrColored, noOfCopies } = req.body;
 	let amount = 0;
-	if (noOfPages < 21) {
-		if (pageSizeFormat === "a3") {
-			amount = grayOrColored === "0" ? 10 : 30;
-		} else if (pageSizeFormat === "a4") {
-			amount = grayOrColored === "0" ? 5 : 15;
-		}
-	} else if (noOfPages < 100) {
-		if (pageSizeFormat === "a3") {
-			amount = grayOrColored === "0" ? 10 : 30;
-		} else if (pageSizeFormat === "a4") {
-			amount = grayOrColored === "0" ? 5 : 15;
-		}
-	} else {
-		if (pageSizeFormat === "a3") {
-			amount = grayOrColored === "0" ? 10 : 30;
-		} else if (pageSizeFormat === "a4") {
-			amount = grayOrColored === "0" ? 5 : 15;
-		}
+	
+	if (pageSizeFormat === "a3") {
+		amount = grayOrColored === "0" ? 10 : 30;
+	} else if (pageSizeFormat === "a4") {
+		amount = grayOrColored === "0" ? 5 : 15;
 	}
 
 	amount =
