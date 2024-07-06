@@ -11,21 +11,21 @@ exports.payment = async (req, res) => {
 	let amount = 0;
 	if (noOfPages < 21) {
 		if (pageSizeFormat === "a3") {
-			amount = grayOrColored === "0" ? 10 : 35;
+			amount = grayOrColored === "0" ? 10 : 30;
 		} else if (pageSizeFormat === "a4") {
-			amount = grayOrColored === "0" ? 3 : 10;
+			amount = grayOrColored === "0" ? 5 : 15;
 		}
 	} else if (noOfPages < 100) {
 		if (pageSizeFormat === "a3") {
-			amount = grayOrColored === "0" ? 7 : 28;
+			amount = grayOrColored === "0" ? 10 : 30;
 		} else if (pageSizeFormat === "a4") {
-			amount = grayOrColored === "0" ? 2 : 8;
+			amount = grayOrColored === "0" ? 5 : 15;
 		}
 	} else {
 		if (pageSizeFormat === "a3") {
-			amount = grayOrColored === "0" ? 5 : 20;
+			amount = grayOrColored === "0" ? 10 : 30;
 		} else if (pageSizeFormat === "a4") {
-			amount = grayOrColored === "0" ? 1 : 7;
+			amount = grayOrColored === "0" ? 5 : 15;
 		}
 	}
 
