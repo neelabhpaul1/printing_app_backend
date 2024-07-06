@@ -56,10 +56,12 @@ const initiateTransfer = async (paymentId, amount, accountId) => {
 	try {
 		let rtpAmount = parseInt(`${process.env.FEES_AMOUNT}`);
 		let vendorAmount = amount / 100 - rtpAmount;
-		// const vendorFee = (vendorAmount * 0.25) / 100;
-		// const chargesToBeCovered = vendorFee > 1 ? 1 : vendorFee;
-		// rtpAmount -= chargesToBeCovered;
-		// vendorAmount += chargesToBeCovered;
+
+		// Optional: For razorypay charges coverage from the RTP commission
+		/* const vendorFee = (vendorAmount * 0.25) / 100;
+		const chargesToBeCovered = vendorFee > 1 ? 1 : vendorFee;
+		rtpAmount -= chargesToBeCovered;
+		vendorAmount += chargesToBeCovered; */
 
 		const transfer = await razorpayInstance.payments.transfer(paymentId, {
 			transfers: [
