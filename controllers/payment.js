@@ -13,7 +13,7 @@ exports.payment = async (req, res) => {
 	if (pageSizeFormat === "a3") {
 		amount = grayOrColored === "0" ? 10 : 30;
 	} else if (pageSizeFormat === "a4") {
-		amount = grayOrColored === "0" ? 1 : 3;
+		amount = grayOrColored === "0" ? 5 : 15;
 	}
 
 	amount =
